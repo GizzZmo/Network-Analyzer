@@ -22,8 +22,8 @@ git push origin v1.0.0
 
 4. **Wait for the workflow to complete**
    - The Release workflow will automatically trigger
-   - It builds binaries for Linux and macOS
-   - Creates release assets as tarballs
+   - It builds binaries for Linux, macOS, and Windows
+   - Creates release assets as tarballs (Linux/macOS) and zip archives (Windows)
    - Publishes them to the GitHub Releases page
 
 ### Release Assets
@@ -31,9 +31,10 @@ git push origin v1.0.0
 Each release includes:
 - `network_monitor-linux-amd64.tar.gz` - Linux x86_64 binary
 - `network_monitor-macos-amd64.tar.gz` - macOS x86_64 binary
+- `network_monitor-windows-amd64.zip` - Windows x86_64 binary
 
-Each tarball contains:
-- The compiled `network_monitor` binary
+Each archive contains:
+- The compiled `network_monitor` binary (or `network_monitor.exe` on Windows)
 - `README.md` documentation
 - `LICENSE` file
 
@@ -71,6 +72,11 @@ The Build workflow runs on every push and pull request to ensure:
 **Workflow fails on Ubuntu:**
 - Check that `libpcap-dev` installs correctly
 - Review the workflow logs for specific error messages
+
+**Workflow fails on Windows:**
+- Ensure Npcap and MinGW are installed correctly via Chocolatey
+- Check that the Npcap SDK path is correct (default: `C:/Program Files/Npcap/sdk/`)
+- Verify that the build tools are in the system PATH
 
 **Release not created:**
 - Verify the tag follows the pattern `v*.*.*` (e.g., `v1.0.0`)

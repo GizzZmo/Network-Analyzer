@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         
     steps:
     - uses: actions/checkout@v4
@@ -29,13 +29,34 @@ jobs:
         # libpcap is usually included with Xcode Command Line Tools
         echo "libpcap should be available on macOS"
     
-    - name: Build
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install npcap -y
+        choco install mingw -y
+    
+    - name: Build (Linux/macOS)
+      if: runner.os != 'Windows'
       run: |
         g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
     
-    - name: Upload artifact
+    - name: Build (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
+    
+    - name: Upload artifact (Linux/macOS)
+      if: runner.os != 'Windows'
       uses: actions/upload-artifact@v4
       with:
         name: network_monitor-${{ matrix.os }}
         path: network_monitor
+        retention-days: 30
+    
+    - name: Upload artifact (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: network_monitor-${{ matrix.os }}
+        path: network_monitor.exe
         retention-days: 30

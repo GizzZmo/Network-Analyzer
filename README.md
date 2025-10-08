@@ -11,7 +11,7 @@ A lightweight, real-time network traffic monitor written in C++. It uses the pca
 - 🌐 Displays source and destination IP addresses and ports
 - 🔍 Identifies TCP, UDP, and ICMP protocols
 - 🎯 Automatically selects a default network device or uses one specified by the user
-- 💻 Cross-platform support (Linux, macOS)
+- 💻 Cross-platform support (Linux, macOS, Windows)
 - 🚀 Lightweight with minimal dependencies
 - 📊 **NEW:** Interactive dashboard with color-coded visualizations
 - 🎨 **NEW:** OSI model layer-based color coding (Layer 3 & Layer 4)
@@ -41,6 +41,15 @@ xcode-select --install
 brew install libpcap
 ```
 
+### On Windows:
+You need to install Npcap (the Windows port of libpcap) and MinGW for compilation:
+```powershell
+# Install Npcap from https://npcap.com/
+# Or use Chocolatey:
+choco install npcap -y
+choco install mingw -y
+```
+
 ## How to Build
 
 You can build the project using a C++ compiler like g++.
@@ -52,8 +61,15 @@ cd Network-Analyzer
 ```
 
 ### Compile the source files:
+
+**Linux/macOS:**
 ```bash
 g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
+```
+
+**Windows (MinGW):**
+```powershell
+g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
 ```
 
 ## How to Run
@@ -127,7 +143,7 @@ All protocols are color-coded according to their OSI model layer:
 ## CI/CD and Releases
 
 This project uses GitHub Actions for:
-- **Continuous Integration**: Automatically builds the project on Ubuntu and macOS for every push and pull request
+- **Continuous Integration**: Automatically builds the project on Ubuntu, macOS, and Windows for every push and pull request
 - **Release Automation**: Creates distributable binaries for tagged releases
 
 ### Downloading Pre-built Binaries
@@ -135,6 +151,7 @@ This project uses GitHub Actions for:
 Pre-built binaries are available from the [Releases](https://github.com/GizzZmo/Network-Analyzer/releases) page for:
 - Linux (amd64)
 - macOS (amd64)
+- Windows (amd64)
 
 ### Creating a Release
 
