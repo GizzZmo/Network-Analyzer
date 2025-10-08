@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libpcap-dev
+    
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        # libpcap is usually included with Xcode Command Line Tools
+        echo "libpcap should be available on macOS"
+    
+    - name: Build
+      run: |
+        g++ -o network_monitor main.cpp network_monitor.cpp -lpcap
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: network_monitor-${{ matrix.os }}
+        path: network_monitor
+        retention-days: 30
