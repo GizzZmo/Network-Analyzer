@@ -1,10 +1,27 @@
+/**
+ * @file main.cpp
+ * @brief Entry point for the Network Analyzer application
+ * 
+ * This file contains the main function and signal handling for graceful shutdown.
+ * It initializes the NetworkMonitor and starts packet capture on a specified
+ * or default network interface.
+ */
+
 #include "network_monitor.h"
 #include <csignal>
 #include <memory>
 
+/// Global pointer to the NetworkMonitor instance for signal handler access
 std::unique_ptr<NetworkMonitor> monitor;
 
-// Signal handler for graceful shutdown
+/**
+ * @brief Signal handler for graceful shutdown
+ * 
+ * Handles SIGINT (Ctrl+C) to cleanly stop packet capture and exit.
+ * The NetworkMonitor destructor will automatically close the pcap session.
+ * 
+ * @param signum Signal number received
+ */
 void signalHandler(int signum) {
     std::cout << "\nInterrupt signal (" << signum << ") received." << std::endl;
     std::cout << "Stopping packet capture..." << std::endl;
@@ -16,7 +33,19 @@ void signalHandler(int signum) {
     exit(signum);
 }
 
-
+/**
+ * @brief Main entry point for the network monitor application
+ * 
+ * Parses command-line arguments, initializes packet capture on the specified
+ * or default network interface, and begins monitoring network traffic.
+ * 
+ * Usage:
+ *   ./network_monitor [interface]
+ * 
+ * @param argc Argument count
+ * @param argv Argument vector (optional interface name)
+ * @return Exit status code (0 for success)
+ */
 int main(int argc, char* argv[]) {
     // Register signal handler for Ctrl+C
     signal(SIGINT, signalHandler);
