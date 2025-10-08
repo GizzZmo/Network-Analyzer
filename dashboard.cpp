@@ -38,12 +38,7 @@ void Dashboard::updatePacket(const PacketInfo& info) {
     conn.dest_port = info.dest_port;
     conn.protocol = info.protocol;
     
-    auto it = connections.find(conn);
-    if (it != connections.end()) {
-        it->second++;
-    } else {
-        connections[conn] = 1;
-    }
+    connections[conn]++;
     
     last_update = std::chrono::steady_clock::now();
 }
