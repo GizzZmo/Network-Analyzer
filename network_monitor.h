@@ -12,9 +12,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 #include <pcap.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+
+// Forward declaration
+class Dashboard;
 
 /**
  * @struct PacketInfo
@@ -45,8 +49,9 @@ public:
     /**
      * @brief Constructor - initializes packet capture on specified device
      * @param device Network interface name (e.g., "eth0", "en0")
+     * @param use_dashboard Whether to use dashboard mode (default: false)
      */
-    NetworkMonitor(const std::string& device);
+    NetworkMonitor(const std::string& device, bool use_dashboard = false);
     
     /**
      * @brief Destructor - cleans up packet capture resources
@@ -58,11 +63,19 @@ public:
      * @param packet_count Number of packets to capture (-1 for infinite)
      */
     void startCapture(int packet_count);
+    
+    /**
+     * @brief Sets the dashboard for visualization
+     * @param dash Shared pointer to dashboard instance
+     */
+    void setDashboard(std::shared_ptr<Dashboard> dash);
 
 private:
     pcap_t* handle;                ///< pcap session handle
     char errbuf[PCAP_ERRBUF_SIZE]; ///< Error message buffer
     std::string device;            ///< Network device to sniff on
+    bool use_dashboard;            ///< Whether to use dashboard mode
+    static std::shared_ptr<Dashboard> dashboard; ///< Shared dashboard instance
 
     /**
      * @brief Callback function to process each captured packet

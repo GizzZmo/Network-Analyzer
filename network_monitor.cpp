@@ -7,6 +7,10 @@
  */
 
 #include "network_monitor.h"
+#include "dashboard.h"
+
+// Static dashboard instance
+std::shared_ptr<Dashboard> NetworkMonitor::dashboard = nullptr;
 
 /**
  * @brief Constructor - Opens network device for packet capture
@@ -15,8 +19,10 @@
  * all packets on the network interface, not just those destined for this host.
  * 
  * @param dev Network device name (e.g., "eth0", "wlan0", "en0")
+ * @param use_dash Whether to use dashboard mode
  */
-NetworkMonitor::NetworkMonitor(const std::string& dev) : device(dev), handle(nullptr) {
+NetworkMonitor::NetworkMonitor(const std::string& dev, bool use_dash) 
+    : handle(nullptr), device(dev), use_dashboard(use_dash) {
     // Open the session in promiscuous mode
     // Parameters: device, snapshot length, promiscuous mode, timeout (ms), error buffer
     handle = pcap_open_live(device.c_str(), BUFSIZ, 1, 1000, errbuf);
@@ -34,6 +40,14 @@ NetworkMonitor::~NetworkMonitor() {
     if (handle) {
         pcap_close(handle);
     }
+}
+
+/**
+ * @brief Sets the dashboard for visualization
+ * @param dash Shared pointer to dashboard instance
+ */
+void NetworkMonitor::setDashboard(std::shared_ptr<Dashboard> dash) {
+    dashboard = dash;
 }
 
 /**
@@ -99,7 +113,12 @@ void NetworkMonitor::packetHandler(u_char* userData, const struct pcap_pkthdr* p
             break;
     }
 
-    printPacketInfo(info);
+    // Update dashboard if enabled, otherwise print packet info
+    if (dashboard) {
+        dashboard->updatePacket(info);
+    } else {
+        printPacketInfo(info);
+    }
 }
 
 /**

@@ -31,7 +31,7 @@ xcode-select --install
 ### Building the Project
 
 ```bash
-g++ -o network_monitor main.cpp network_monitor.cpp -lpcap
+g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
 ```
 
 ### Testing Your Changes

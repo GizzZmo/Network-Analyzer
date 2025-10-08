@@ -13,6 +13,10 @@ A lightweight, real-time network traffic monitor written in C++. It uses the pca
 - 🎯 Automatically selects a default network device or uses one specified by the user
 - 💻 Cross-platform support (Linux, macOS)
 - 🚀 Lightweight with minimal dependencies
+- 📊 **NEW:** Interactive dashboard with color-coded visualizations
+- 🎨 **NEW:** OSI model layer-based color coding (Layer 3 & Layer 4)
+- 📈 **NEW:** Real-time traffic statistics and protocol distribution
+- 🔗 **NEW:** Top connections tracking
 
 ## Dependencies
 
@@ -49,21 +53,45 @@ cd Network-Analyzer
 
 ### Compile the source files:
 ```bash
-g++ -o network_monitor main.cpp network_monitor.cpp -lpcap
+g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
 ```
 
 ## How to Run
 
 You need to run the executable with sudo permissions to access network interfaces.
 
-### Monitor a Specific Interface
+### Dashboard Mode (Recommended)
+Run with the `--dashboard` flag to see a beautiful, color-coded real-time dashboard:
+```bash
+sudo ./network_monitor --dashboard
+```
+
+Or with a specific interface:
+```bash
+sudo ./network_monitor eth0 --dashboard
+```
+
+The dashboard displays:
+- **Protocol Distribution**: Bar charts showing packet counts by protocol
+- **Traffic Statistics**: Total packets, data volume, and rates
+- **Top Connections**: Most active network connections
+- **OSI Layer Color Coding**: 
+  - 🟢 Green: TCP (Layer 4 - Transport)
+  - 🟡 Yellow: UDP (Layer 4 - Transport)
+  - 🔵 Blue: ICMP (Layer 3 - Network)
+  - 🟣 Magenta: Other protocols
+
+### Classic Mode
+For simple text output without the dashboard:
+
+#### Monitor a Specific Interface
 You can specify the network interface you want to monitor as a command-line argument:
 ```bash
 sudo ./network_monitor eth0
 ```
 Replace `eth0` with the name of your network interface (e.g., `en0` on macOS, `wlan0` for wireless).
 
-### Monitor the Default Interface
+#### Monitor the Default Interface
 If you don't provide an interface, the program will try to find a default one:
 ```bash
 sudo ./network_monitor
@@ -73,6 +101,7 @@ Press **Ctrl+C** to stop the monitor.
 
 ## Example Output
 
+### Classic Mode
 ```
 Sniffing on device: eth0
 Starting network monitor... (Press Ctrl+C to stop)
@@ -81,6 +110,19 @@ Packet captured. Length: 74 | Protocol: UDP | From: 192.168.1.10:54321 -> To: 8.
 Packet captured. Length: 98 | Protocol: ICMP | From: 192.168.1.1 -> To: 192.168.1.10
 ...
 ```
+
+### Dashboard Mode
+The dashboard mode displays a real-time, color-coded visualization with:
+- Protocol distribution charts with OSI layer information
+- Traffic statistics (packet rate, data throughput)
+- Top 10 active connections
+- Color-coded protocol legend
+
+All protocols are color-coded according to their OSI model layer:
+- **TCP** (Green) - Transport Layer (Layer 4)
+- **UDP** (Yellow) - Transport Layer (Layer 4)  
+- **ICMP** (Blue) - Network Layer (Layer 3)
+- **Other** (Magenta) - Various Layers
 
 ## CI/CD and Releases
 
@@ -111,8 +153,10 @@ For detailed instructions on creating releases, see [RELEASE.md](RELEASE.md).
 ```
 Network-Analyzer/
 ├── main.cpp              # Entry point and signal handling
-├── network_monitor.h     # Header file with class definitions
+├── network_monitor.h     # Header file with NetworkMonitor class
 ├── network_monitor.cpp   # Implementation of NetworkMonitor class
+├── dashboard.h           # Header file with Dashboard class
+├── dashboard.cpp         # Implementation of Dashboard with visualizations
 ├── README.md            # This file
 ├── LICENSE              # MIT License
 ├── CONTRIBUTING.md      # Contribution guidelines
