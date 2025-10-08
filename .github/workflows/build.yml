@@ -35,6 +35,11 @@ jobs:
         choco install npcap -y
         choco install mingw -y
     
+    - name: Install Npcap SDK (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install npcap-sdk -y
+    
     - name: Build (Linux/macOS)
       if: runner.os != 'Windows'
       run: |
