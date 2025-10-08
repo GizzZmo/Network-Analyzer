@@ -1,1 +1,22 @@
-Compiled object files*.o*.objExecutables*.exe*.out*.appnetwork_monitorBuild directoriesbuild/bin/D-Bus session bus file.dbus/DWARF debug files*.dSYM/Other.DS_Store
+# Compiled object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+*.app
+network_monitor
+
+# Build directories
+build/
+bin/
+
+# D-Bus session bus file
+.dbus/
+
+# DWARF debug files
+*.dSYM/
+
+# Other
+.DS_Store
