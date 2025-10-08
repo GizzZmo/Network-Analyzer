@@ -28,24 +28,49 @@ sudo yum install libpcap-devel
 xcode-select --install
 ```
 
+**Windows:**
+```powershell
+# Install Npcap and MinGW using Chocolatey
+choco install npcap -y
+choco install mingw -y
+```
+
 ### Building the Project
 
+**Linux/macOS:**
 ```bash
 g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
+```
+
+**Windows (MinGW):**
+```powershell
+g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
 ```
 
 ### Testing Your Changes
 
 After building, test the network monitor:
 
+**Linux/macOS:**
 ```bash
 sudo ./network_monitor
 ```
 
+**Windows (run as Administrator):**
+```powershell
+.\network_monitor.exe
+```
+
 Or specify a network interface:
 
+**Linux/macOS:**
 ```bash
 sudo ./network_monitor eth0
+```
+
+**Windows:**
+```powershell
+.\network_monitor.exe "Ethernet"
 ```
 
 ## Code Style
