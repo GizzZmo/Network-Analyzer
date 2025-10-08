@@ -47,8 +47,12 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
-        unzip npcap-sdk.zip
-        ls npcap-sdk-1.13
+        7z x npcap-sdk.zip
+        ls
+        if [ ! -d "npcap-sdk-1.13" ]; then
+          echo "Npcap SDK directory not found!"
+          exit 1
+        fi
         mkdir -p "C:/Program Files/Npcap/sdk"
         mv npcap-sdk-1.13/* "C:/Program Files/Npcap/sdk/"
       shell: bash
