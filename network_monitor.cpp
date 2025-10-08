@@ -22,7 +22,7 @@ std::shared_ptr<Dashboard> NetworkMonitor::dashboard = nullptr;
  * @param use_dash Whether to use dashboard mode
  */
 NetworkMonitor::NetworkMonitor(const std::string& dev, bool use_dash) 
-    : device(dev), handle(nullptr), use_dashboard(use_dash) {
+    : handle(nullptr), device(dev), use_dashboard(use_dash) {
     // Open the session in promiscuous mode
     // Parameters: device, snapshot length, promiscuous mode, timeout (ms), error buffer
     handle = pcap_open_live(device.c_str(), BUFSIZ, 1, 1000, errbuf);
