@@ -104,6 +104,8 @@ git push origin v1.0.0
 
 The release workflow will automatically build and upload binaries for all supported platforms.
 
+For detailed instructions on creating releases, see [RELEASE.md](RELEASE.md).
+
 ## Project Structure
 
 ```
@@ -114,6 +116,7 @@ Network-Analyzer/
 ├── README.md            # This file
 ├── LICENSE              # MIT License
 ├── CONTRIBUTING.md      # Contribution guidelines
+├── RELEASE.md           # Release process documentation
 └── .github/
     └── workflows/
         ├── build.yml    # CI workflow for building artifacts
