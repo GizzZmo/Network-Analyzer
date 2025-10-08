@@ -36,7 +36,7 @@ jobs:
     
     - name: Build
       run: |
-        g++ -o ${{ matrix.artifact_name }} main.cpp network_monitor.cpp -lpcap
+        g++ -o ${{ matrix.artifact_name }} main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
         chmod +x ${{ matrix.artifact_name }}
     
     - name: Create tarball
