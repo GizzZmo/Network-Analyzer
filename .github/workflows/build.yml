@@ -49,12 +49,16 @@ jobs:
           exit 1
         }
         7z x npcap-sdk.zip
-        if (!(Test-Path "npcap-sdk-1.13")) {
-          Write-Error "Npcap SDK directory not found!"
+        # Find the extracted SDK directory
+        $sdkDir = Get-ChildItem -Directory | Where-Object { $_.Name -like "npcap-sdk-*" } | Select-Object -First 1
+        if (!$sdkDir) {
+          Write-Error "Npcap SDK directory not found after extraction!"
+          Get-ChildItem
           exit 1
         }
+        Write-Host "Found SDK directory: $($sdkDir.Name)"
         New-Item -Path "C:/Program Files/Npcap/sdk" -ItemType Directory -Force
-        Move-Item "npcap-sdk-1.13/*" "C:/Program Files/Npcap/sdk/" -Force
+        Copy-Item -Path "$($sdkDir.FullName)/*" -Destination "C:/Program Files/Npcap/sdk/" -Recurse -Force
     
     - name: Build (Linux/macOS)
       if: runner.os != 'Windows'
