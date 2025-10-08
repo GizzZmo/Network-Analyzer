@@ -56,12 +56,16 @@ jobs:
           exit 1
         fi
         7z x npcap-sdk.zip
-        if [ ! -d "npcap-sdk-1.13" ]; then
-          echo "Npcap SDK directory not found!"
+        # Find the extracted SDK directory
+        SDK_DIR=$(find . -maxdepth 1 -type d -name "npcap-sdk-*" | head -1)
+        if [ -z "$SDK_DIR" ]; then
+          echo "Npcap SDK directory not found after extraction!"
+          ls -la
           exit 1
         fi
+        echo "Found SDK directory: $SDK_DIR"
         mkdir -p "C:/Program Files/Npcap/sdk"
-        mv npcap-sdk-1.13/* "C:/Program Files/Npcap/sdk/"
+        cp -r "$SDK_DIR"/* "C:/Program Files/Npcap/sdk/"
       shell: bash
     
     - name: Build (Linux/macOS)
