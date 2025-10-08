@@ -14,8 +14,48 @@
 #include <vector>
 #include <memory>
 #include <pcap.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
+
+// Platform-specific includes
+#ifdef _WIN32
+    // Windows includes
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    
+    // Windows compatibility definitions for BSD-style structures
+    // Define IP header structure compatible with BSD sockets
+    struct ip {
+        u_char  ip_hl:4;        // header length
+        u_char  ip_v:4;         // version
+        u_char  ip_tos;         // type of service
+        u_short ip_len;         // total length
+        u_short ip_id;          // identification
+        u_short ip_off;         // fragment offset field
+        u_char  ip_ttl;         // time to live
+        u_char  ip_p;           // protocol
+        u_short ip_sum;         // checksum
+        struct in_addr ip_src;  // source address
+        struct in_addr ip_dst;  // dest address
+    };
+    
+    // Define TCP header structure compatible with BSD sockets
+    struct tcphdr {
+        u_short th_sport;       // source port
+        u_short th_dport;       // destination port
+        u_int   th_seq;         // sequence number
+        u_int   th_ack;         // acknowledgement number
+        u_char  th_x2:4;        // (unused)
+        u_char  th_off:4;       // data offset
+        u_char  th_flags;       // flags
+        u_short th_win;         // window
+        u_short th_sum;         // checksum
+        u_short th_urp;         // urgent pointer
+    };
+#else
+    // Unix/Linux/macOS includes
+    #include <netinet/ip.h>
+    #include <netinet/tcp.h>
+    #include <arpa/inet.h>
+#endif
 
 // Forward declaration
 class Dashboard;
