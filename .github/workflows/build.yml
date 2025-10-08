@@ -39,7 +39,9 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
-        unzip npcap-sdk.zip -d "C:/Program Files/Npcap"
+        unzip npcap-sdk.zip
+        mkdir -p "C:/Program Files/Npcap/sdk"
+        mv npcap-sdk-1.13/sdk/* "C:/Program Files/Npcap/sdk/"
       shell: bash
     
     - name: Build (Linux/macOS)
