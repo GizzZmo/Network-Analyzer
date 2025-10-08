@@ -43,12 +43,19 @@ jobs:
         choco install npcap -y
         choco install mingw -y
     
+    - name: Install 7-Zip (Windows)
+      if: runner.os == 'Windows'
+      run: choco install 7zip -y
+    
     - name: Install Npcap SDK (Windows)
       if: runner.os == 'Windows'
       run: |
         curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
+        if [ ! -s npcap-sdk.zip ]; then
+          echo "Npcap SDK zip download failed!"
+          exit 1
+        fi
         7z x npcap-sdk.zip
-        ls
         if [ ! -d "npcap-sdk-1.13" ]; then
           echo "Npcap SDK directory not found!"
           exit 1
