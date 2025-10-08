@@ -40,8 +40,9 @@ jobs:
       run: |
         curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
         unzip npcap-sdk.zip
+        ls npcap-sdk-1.13
         mkdir -p "C:/Program Files/Npcap/sdk"
-        mv npcap-sdk-1.13/sdk/* "C:/Program Files/Npcap/sdk/"
+        mv npcap-sdk-1.13/* "C:/Program Files/Npcap/sdk/"
       shell: bash
     
     - name: Build (Linux/macOS)
