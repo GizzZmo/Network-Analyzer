@@ -38,7 +38,9 @@ jobs:
     - name: Install Npcap SDK (Windows)
       if: runner.os == 'Windows'
       run: |
-        choco install npcap-sdk -y
+        curl -L -o npcap-sdk.zip https://npcap.com/dist/npcap-sdk-1.13.zip
+        unzip npcap-sdk.zip -d "C:/Program Files/Npcap"
+      shell: bash
     
     - name: Build (Linux/macOS)
       if: runner.os != 'Windows'
