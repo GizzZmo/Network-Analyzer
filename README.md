@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/GizzZmo/Network-Analyzer/actions/workflows/build.yml/badge.svg)](https://github.com/GizzZmo/Network-Analyzer/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build](https://github.com/GizzZmo/Network-Analyzer/actions/workflows/build.yml/badge.svg?event=public)](https://github.com/GizzZmo/Network-Analyzer/actions/workflows/build.yml)
 
 A lightweight, real-time network traffic monitor written in C++. It uses the pcap (packet capture) library to sniff packets on a network interface and displays detailed information about them.
 
