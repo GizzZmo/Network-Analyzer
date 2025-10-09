@@ -200,15 +200,29 @@ std::vector<std::string> parseInterfaceList(const std::string& list) {
  * @brief Main entry point for the network monitor application
  * 
  * Parses command-line arguments, initializes packet capture on the specified
- * or default network interface, and begins monitoring network traffic.
- * Supports dashboard mode with --dashboard flag.
+ * or default network interface(s), and begins monitoring network traffic.
+ * Supports dashboard mode, interactive selection, and multi-interface monitoring.
  * 
  * Usage:
- *   ./network_monitor [interface] [--dashboard]
- *   ./network_monitor --dashboard [interface]
+ *   ./network_monitor [OPTIONS] [INTERFACE]
+ * 
+ * Options:
+ *   -d, --dashboard         Enable dashboard mode
+ *   -l, --list              List available interfaces
+ *   -i, --interactive       Interactive interface selection
+ *   -m, --multi             Multi-interface mode
+ *   --interfaces <list>     Comma-separated interface list for multi-mode
+ *   -h, --help              Show help message
+ * 
+ * Examples:
+ *   ./network_monitor                                # Default interface
+ *   ./network_monitor eth0                           # Specific interface
+ *   ./network_monitor --dashboard                    # Dashboard mode
+ *   ./network_monitor -i                             # Interactive selection
+ *   ./network_monitor -m --interfaces eth0,lo        # Multi-interface
  * 
  * @param argc Argument count
- * @param argv Argument vector (optional interface name and --dashboard flag)
+ * @param argv Argument vector
  * @return Exit status code (0 for success)
  */
 int main(int argc, char* argv[]) {
