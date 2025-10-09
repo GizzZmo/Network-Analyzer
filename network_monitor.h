@@ -74,6 +74,7 @@ struct PacketInfo {
     int dest_port;            ///< Destination port number
     std::string protocol;     ///< Protocol type (TCP, UDP, ICMP, etc.)
     int length;               ///< Total packet length in bytes
+    std::string interface;    ///< Network interface name
 };
 
 /**
@@ -109,6 +110,18 @@ public:
      * @param dash Shared pointer to dashboard instance
      */
     void setDashboard(std::shared_ptr<Dashboard> dash);
+    
+    /**
+     * @brief Lists all available network interfaces
+     * @return Vector of interface names
+     */
+    static std::vector<std::string> listInterfaces();
+    
+    /**
+     * @brief Gets the current network interface name
+     * @return Interface name
+     */
+    std::string getDevice() const;
 
 private:
     pcap_t* handle;                ///< pcap session handle
@@ -116,6 +129,7 @@ private:
     std::string device;            ///< Network device to sniff on
     bool use_dashboard;            ///< Whether to use dashboard mode
     static std::shared_ptr<Dashboard> dashboard; ///< Shared dashboard instance
+    static std::string current_device; ///< Current device being monitored (for packet handler)
 
     /**
      * @brief Callback function to process each captured packet
