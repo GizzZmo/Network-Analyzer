@@ -108,6 +108,8 @@ private:
     // Statistics
     std::map<std::string, size_t> protocol_counts;
     std::map<std::string, size_t> protocol_bytes;
+    std::map<std::string, size_t> interface_counts;  ///< Packet count per interface
+    std::map<std::string, size_t> interface_bytes;   ///< Byte count per interface
     std::map<ConnectionInfo, size_t> connections;
     size_t total_packets;
     size_t total_bytes;
@@ -130,6 +132,11 @@ private:
      * @brief Displays top connections
      */
     void displayTopConnections();
+    
+    /**
+     * @brief Displays interface statistics
+     */
+    void displayInterfaceStats();
     
     /**
      * @brief Draws a horizontal bar chart
