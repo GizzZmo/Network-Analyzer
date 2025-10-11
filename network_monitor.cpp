@@ -122,7 +122,7 @@ void NetworkMonitor::packetHandler(u_char* userData, const struct pcap_pkthdr* p
     info.source_ip = inet_ntoa(ip_header->ip_src);
     info.dest_ip = inet_ntoa(ip_header->ip_dst);
     info.length = pkthdr->len;
-    info.interface = current_device;
+    info.interface_name = current_device;
 
     // Determine protocol and extract port information
     switch (ip_header->ip_p) {
@@ -168,7 +168,7 @@ void NetworkMonitor::packetHandler(u_char* userData, const struct pcap_pkthdr* p
  * @param info PacketInfo structure containing the packet metadata
  */
 void NetworkMonitor::printPacketInfo(const PacketInfo& info) {
-    std::cout << "[" << info.interface << "] ";
+    std::cout << "[" << info.interface_name << "] ";
     std::cout << "Packet captured. Length: " << info.length << " | ";
     std::cout << "Protocol: " << info.protocol << " | ";
     std::cout << "From: " << info.source_ip << ":" << info.source_port << " -> ";

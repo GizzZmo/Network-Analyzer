@@ -31,9 +31,9 @@ void Dashboard::updatePacket(const PacketInfo& info) {
     protocol_bytes[info.protocol] += info.length;
     
     // Update interface statistics
-    if (!info.interface.empty()) {
-        interface_counts[info.interface]++;
-        interface_bytes[info.interface] += info.length;
+    if (!info.interface_name.empty()) {
+        interface_counts[info.interface_name]++;
+        interface_bytes[info.interface_name] += info.length;
     }
     
     // Update connection tracking
