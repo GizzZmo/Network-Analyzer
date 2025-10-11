@@ -74,7 +74,7 @@ struct PacketInfo {
     int dest_port;            ///< Destination port number
     std::string protocol;     ///< Protocol type (TCP, UDP, ICMP, etc.)
     int length;               ///< Total packet length in bytes
-    std::string interface;    ///< Network interface name
+    std::string interface_name; ///< Network interface name
 };
 
 /**
