@@ -39,12 +39,12 @@ choco install mingw -y
 
 **Linux/macOS:**
 ```bash
-g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
+g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpcap -lpthread
 ```
 
 **Windows (MinGW):**
 ```powershell
-g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
+g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
 ```
 
 ### Testing Your Changes

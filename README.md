@@ -12,12 +12,16 @@ A lightweight, real-time network traffic monitor written in C++. It uses the pca
 - 🌐 Displays source and destination IP addresses and ports
 - 🔍 Identifies TCP, UDP, and ICMP protocols
 - 🎯 Automatically selects a default network device or uses one specified by the user
+- 🔧 **NEW:** Interactive network interface selection
+- 🎛️ **NEW:** List all available network interfaces
+- 🚀 **NEW:** Multi-interface monitoring - capture from multiple network cards simultaneously
 - 💻 Cross-platform support (Linux, macOS, Windows)
 - 🚀 Lightweight with minimal dependencies
 - 📊 **NEW:** Interactive dashboard with color-coded visualizations
 - 🎨 **NEW:** OSI model layer-based color coding (Layer 3 & Layer 4)
 - 📈 **NEW:** Real-time traffic statistics and protocol distribution
 - 🔗 **NEW:** Top connections tracking
+- 📊 **NEW:** Per-interface statistics in dashboard mode
 
 ## Dependencies
 
@@ -65,17 +69,51 @@ cd Network-Analyzer
 
 **Linux/macOS:**
 ```bash
-g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp -lpcap -lpthread
+g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpcap -lpthread
 ```
 
 **Windows (MinGW):**
 ```powershell
-g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
+g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
 ```
 
 ## How to Run
 
 You need to run the executable with sudo permissions to access network interfaces.
+
+### Command-Line Options
+
+```bash
+Usage:
+  ./network_monitor [OPTIONS] [INTERFACE]
+
+Options:
+  -d, --dashboard        Enable dashboard mode with visualizations
+  -l, --list             List all available network interfaces
+  -i, --interactive      Interactive interface selection
+  -m, --multi            Multi-interface mode (specify interfaces with --interfaces)
+  --interfaces <list>    Comma-separated list of interfaces for multi-mode
+  -h, --help             Show this help message
+```
+
+### List Available Interfaces
+
+To see all available network interfaces on your system:
+```bash
+sudo ./network_monitor --list
+```
+
+### Interactive Interface Selection
+
+Use interactive mode to choose from available interfaces:
+```bash
+sudo ./network_monitor --interactive
+```
+
+Or with dashboard mode:
+```bash
+sudo ./network_monitor -i --dashboard
+```
 
 ### Dashboard Mode (Recommended)
 Run with the `--dashboard` flag to see a beautiful, color-coded real-time dashboard:
@@ -91,12 +129,34 @@ sudo ./network_monitor eth0 --dashboard
 The dashboard displays:
 - **Protocol Distribution**: Bar charts showing packet counts by protocol
 - **Traffic Statistics**: Total packets, data volume, and rates
+- **Interface Statistics**: Per-interface packet and traffic breakdown (when monitoring multiple interfaces)
 - **Top Connections**: Most active network connections
 - **OSI Layer Color Coding**: 
   - 🟢 Green: TCP (Layer 4 - Transport)
   - 🟡 Yellow: UDP (Layer 4 - Transport)
   - 🔵 Blue: ICMP (Layer 3 - Network)
   - 🟣 Magenta: Other protocols
+
+### Multi-Interface Monitoring (NEW!)
+
+Monitor multiple network interfaces simultaneously:
+
+**Specify interfaces directly:**
+```bash
+sudo ./network_monitor --multi --interfaces eth0,lo
+```
+
+**With dashboard mode:**
+```bash
+sudo ./network_monitor -m -d --interfaces eth0,docker0,lo
+```
+
+**Interactive multi-interface selection:**
+```bash
+sudo ./network_monitor --multi --interactive
+```
+
+This will allow you to select multiple interfaces from the list. Enter your selections as comma-separated numbers (e.g., `1,3,4`).
 
 ### Classic Mode
 For simple text output without the dashboard:
@@ -122,9 +182,25 @@ Press **Ctrl+C** to stop the monitor.
 ```
 Sniffing on device: eth0
 Starting network monitor... (Press Ctrl+C to stop)
-Packet captured. Length: 66 | Protocol: TCP | From: 192.168.1.10:12345 -> To: 172.217.16.14:443
-Packet captured. Length: 74 | Protocol: UDP | From: 192.168.1.10:54321 -> To: 8.8.8.8:53
-Packet captured. Length: 98 | Protocol: ICMP | From: 192.168.1.1 -> To: 192.168.1.10
+[eth0] Packet captured. Length: 66 | Protocol: TCP | From: 192.168.1.10:12345 -> To: 172.217.16.14:443
+[eth0] Packet captured. Length: 74 | Protocol: UDP | From: 192.168.1.10:54321 -> To: 8.8.8.8:53
+[eth0] Packet captured. Length: 98 | Protocol: ICMP | From: 192.168.1.1 -> To: 192.168.1.10
+...
+```
+
+### Multi-Interface Mode
+```
+Initializing multi-interface monitoring for:
+  - eth0
+  - lo
+  - docker0
+Starting capture on 3 interface(s)...
+Sniffing on device: eth0
+Sniffing on device: lo
+Sniffing on device: docker0
+[eth0] Packet captured. Length: 66 | Protocol: TCP | From: 192.168.1.10:443 -> To: 172.217.16.14:443
+[lo] Packet captured. Length: 60 | Protocol: TCP | From: 127.0.0.1:8080 -> To: 127.0.0.1:54321
+[docker0] Packet captured. Length: 74 | Protocol: UDP | From: 172.17.0.2:53 -> To: 172.17.0.1:53
 ...
 ```
 
@@ -132,6 +208,7 @@ Packet captured. Length: 98 | Protocol: ICMP | From: 192.168.1.1 -> To: 192.168.
 The dashboard mode displays a real-time, color-coded visualization with:
 - Protocol distribution charts with OSI layer information
 - Traffic statistics (packet rate, data throughput)
+- Interface statistics (when monitoring multiple interfaces)
 - Top 10 active connections
 - Color-coded protocol legend
 
@@ -173,6 +250,8 @@ Network-Analyzer/
 ├── main.cpp              # Entry point and signal handling
 ├── network_monitor.h     # Header file with NetworkMonitor class
 ├── network_monitor.cpp   # Implementation of NetworkMonitor class
+├── multi_monitor.h       # Header file with MultiMonitor class for multi-interface support
+├── multi_monitor.cpp     # Implementation of MultiMonitor class
 ├── dashboard.h           # Header file with Dashboard class
 ├── dashboard.cpp         # Implementation of Dashboard with visualizations
 ├── README.md            # This file

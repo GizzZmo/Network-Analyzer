@@ -11,6 +11,8 @@
 
 // Static dashboard instance
 std::shared_ptr<Dashboard> NetworkMonitor::dashboard = nullptr;
+// Static current device name for packet handler
+std::string NetworkMonitor::current_device = "";
 
 /**
  * @brief Constructor - Opens network device for packet capture
@@ -30,6 +32,7 @@ NetworkMonitor::NetworkMonitor(const std::string& dev, bool use_dash)
         std::cerr << "Couldn't open device " << device << ": " << errbuf << std::endl;
         exit(EXIT_FAILURE);
     }
+    current_device = device;
     std::cout << "Sniffing on device: " << device << std::endl;
 }
 
@@ -48,6 +51,40 @@ NetworkMonitor::~NetworkMonitor() {
  */
 void NetworkMonitor::setDashboard(std::shared_ptr<Dashboard> dash) {
     dashboard = dash;
+}
+
+/**
+ * @brief Lists all available network interfaces
+ * @return Vector of interface names
+ */
+std::vector<std::string> NetworkMonitor::listInterfaces() {
+    std::vector<std::string> interfaces;
+    pcap_if_t* alldevs;
+    char errbuf[PCAP_ERRBUF_SIZE];
+    
+    // Find all devices
+    if (pcap_findalldevs(&alldevs, errbuf) == -1) {
+        std::cerr << "Error finding devices: " << errbuf << std::endl;
+        return interfaces;
+    }
+    
+    // Iterate through the list and add to vector
+    for (pcap_if_t* dev = alldevs; dev != nullptr; dev = dev->next) {
+        interfaces.push_back(dev->name);
+    }
+    
+    // Free the device list
+    pcap_freealldevs(alldevs);
+    
+    return interfaces;
+}
+
+/**
+ * @brief Gets the current network interface name
+ * @return Interface name
+ */
+std::string NetworkMonitor::getDevice() const {
+    return device;
 }
 
 /**
@@ -85,6 +122,7 @@ void NetworkMonitor::packetHandler(u_char* userData, const struct pcap_pkthdr* p
     info.source_ip = inet_ntoa(ip_header->ip_src);
     info.dest_ip = inet_ntoa(ip_header->ip_dst);
     info.length = pkthdr->len;
+    info.interface = current_device;
 
     // Determine protocol and extract port information
     switch (ip_header->ip_p) {
@@ -130,6 +168,7 @@ void NetworkMonitor::packetHandler(u_char* userData, const struct pcap_pkthdr* p
  * @param info PacketInfo structure containing the packet metadata
  */
 void NetworkMonitor::printPacketInfo(const PacketInfo& info) {
+    std::cout << "[" << info.interface << "] ";
     std::cout << "Packet captured. Length: " << info.length << " | ";
     std::cout << "Protocol: " << info.protocol << " | ";
     std::cout << "From: " << info.source_ip << ":" << info.source_port << " -> ";

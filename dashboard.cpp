@@ -30,6 +30,12 @@ void Dashboard::updatePacket(const PacketInfo& info) {
     protocol_counts[info.protocol]++;
     protocol_bytes[info.protocol] += info.length;
     
+    // Update interface statistics
+    if (!info.interface.empty()) {
+        interface_counts[info.interface]++;
+        interface_bytes[info.interface] += info.length;
+    }
+    
     // Update connection tracking
     ConnectionInfo conn;
     conn.source_ip = info.source_ip;
@@ -221,6 +227,40 @@ void Dashboard::displayTopConnections() {
 }
 
 /**
+ * @brief Displays interface statistics
+ */
+void Dashboard::displayInterfaceStats() {
+    if (interface_counts.empty()) {
+        return;  // Don't display if no interface data
+    }
+    
+    std::cout << Colors::HEADER << "╔════════════════════════════════════════════════════════════════╗" << std::endl;
+    std::cout << "║  INTERFACE STATISTICS                                          ║" << std::endl;
+    std::cout << "╚════════════════════════════════════════════════════════════════╝" << Colors::RESET << std::endl;
+    
+    // Find max count for scaling
+    size_t max_count = 0;
+    for (const auto& pair : interface_counts) {
+        if (pair.second > max_count) {
+            max_count = pair.second;
+        }
+    }
+    
+    // Display each interface
+    for (const auto& pair : interface_counts) {
+        std::string iface = pair.first;
+        size_t count = pair.second;
+        size_t bytes = interface_bytes[iface];
+        
+        std::cout << Colors::LABEL << "  Interface: " << Colors::RESET << iface << std::endl;
+        drawBar("Packets", count, max_count, Colors::BAR, 40);
+        std::cout << Colors::LABEL << "           └─ Traffic: " << formatBytes(bytes) 
+                  << Colors::RESET << std::endl;
+        std::cout << std::endl;
+    }
+}
+
+/**
  * @brief Displays the complete dashboard to console
  */
 void Dashboard::display() {
@@ -238,6 +278,7 @@ void Dashboard::display() {
     
     // Display sections
     displayTrafficStats();
+    displayInterfaceStats();  // Show interface stats if available
     displayProtocolDistribution();
     displayTopConnections();
     
