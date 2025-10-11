@@ -19,7 +19,7 @@ g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp multi_monitor.
 
 **Windows:**
 ```powershell
-g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpacket -lws2_32 -static-libgcc -static-libstdc++
+g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lwpcap -lpacket -lws2_32 -static-libgcc -static-libstdc++
 ```
 
 ## Test Cases
