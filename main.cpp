@@ -85,7 +85,13 @@ void listInterfaces() {
     }
     
     for (size_t i = 0; i < interfaces.size(); i++) {
-        std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        std::string description = NetworkMonitor::getInterfaceDescription(interfaces[i]);
+        // Show description (and device name if different)
+        if (description != interfaces[i]) {
+            std::cout << "  " << (i + 1) << ". " << description << " (" << interfaces[i] << ")" << std::endl;
+        } else {
+            std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        }
     }
     std::cout << std::endl;
 }
@@ -106,7 +112,13 @@ std::string selectInterface() {
     std::cout << std::endl;
     
     for (size_t i = 0; i < interfaces.size(); i++) {
-        std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        std::string description = NetworkMonitor::getInterfaceDescription(interfaces[i]);
+        // Show description (and device name if different)
+        if (description != interfaces[i]) {
+            std::cout << "  " << (i + 1) << ". " << description << " (" << interfaces[i] << ")" << std::endl;
+        } else {
+            std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        }
     }
     
     std::cout << std::endl;
@@ -140,7 +152,13 @@ std::vector<std::string> selectMultipleInterfaces() {
     std::cout << std::endl;
     
     for (size_t i = 0; i < interfaces.size(); i++) {
-        std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        std::string description = NetworkMonitor::getInterfaceDescription(interfaces[i]);
+        // Show description (and device name if different)
+        if (description != interfaces[i]) {
+            std::cout << "  " << (i + 1) << ". " << description << " (" << interfaces[i] << ")" << std::endl;
+        } else {
+            std::cout << "  " << (i + 1) << ". " << interfaces[i] << std::endl;
+        }
     }
     
     std::cout << std::endl;

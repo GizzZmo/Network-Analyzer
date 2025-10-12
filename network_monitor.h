@@ -118,6 +118,13 @@ public:
     static std::vector<std::string> listInterfaces();
     
     /**
+     * @brief Gets friendly description for an interface
+     * @param device_name Device name to get description for
+     * @return Friendly description if available, otherwise returns device_name
+     */
+    static std::string getInterfaceDescription(const std::string& device_name);
+    
+    /**
      * @brief Gets the current network interface name
      * @return Interface name
      */
