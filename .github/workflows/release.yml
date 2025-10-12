@@ -89,11 +89,29 @@ jobs:
       run: |
         7z a ${{ matrix.asset_name }}.zip ${{ matrix.artifact_name }} README.md LICENSE
     
+    - name: Generate SHA256 checksums
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $hash = (Get-FileHash -Algorithm SHA256 "${{ matrix.asset_name }}.zip").Hash
+        $hashString = "$hash  ${{ matrix.asset_name }}.zip"
+        Set-Content -Path "${{ matrix.asset_name }}.zip.sha256" -Value $hashString
+        Write-Host "SHA256 checksum: $hashString"
+        Get-Content "${{ matrix.asset_name }}.zip.sha256"
+    
+    - name: Generate SHA256 checksums (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        sha256sum ${{ matrix.asset_name }}.tar.gz > ${{ matrix.asset_name }}.tar.gz.sha256
+        cat ${{ matrix.asset_name }}.tar.gz.sha256
+    
     - name: Upload Release Asset (Linux/macOS)
       if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ matrix.asset_name }}.tar.gz
+        files: |
+          ${{ matrix.asset_name }}.tar.gz
+          ${{ matrix.asset_name }}.tar.gz.sha256
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
@@ -101,6 +119,8 @@ jobs:
       if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{ matrix.asset_name }}.zip
+        files: |
+          ${{ matrix.asset_name }}.zip
+          ${{ matrix.asset_name }}.zip.sha256
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
