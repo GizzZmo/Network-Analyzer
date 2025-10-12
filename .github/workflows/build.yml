@@ -13,32 +13,32 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Install dependencies (Ubuntu)
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install -y libpcap-dev
-    
+
     - name: Install dependencies (macOS)
       if: runner.os == 'macOS'
       run: |
         # libpcap is usually included with Xcode Command Line Tools
         echo "libpcap should be available on macOS"
-    
+
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows'
       run: |
         choco install npcap -y
         choco install mingw -y
-    
+
     - name: Install 7-Zip (Windows)
       if: runner.os == 'Windows'
       run: choco install 7zip -y
-    
+
     - name: Install Npcap SDK (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
@@ -63,17 +63,17 @@ jobs:
         Write-Host "Found SDK directory: $($sdkDir.FullName)"
         New-Item -Path "C:/Program Files/Npcap/sdk" -ItemType Directory -Force
         Copy-Item -Path "$($sdkDir.FullName)/*" -Destination "C:/Program Files/Npcap/sdk/" -Recurse -Force
-    
+
     - name: Build (Linux/macOS)
       if: runner.os != 'Windows'
       run: |
         g++ -o network_monitor main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpcap -lpthread
-    
+
     - name: Build (Windows)
       if: runner.os == 'Windows'
       run: |
         g++ -o network_monitor.exe main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lwpcap -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
-    
+
     - name: Upload artifact (Linux/macOS)
       if: runner.os != 'Windows'
       uses: actions/upload-artifact@v4
@@ -81,7 +81,7 @@ jobs:
         name: network_monitor-${{ matrix.os }}
         path: network_monitor
         retention-days: 30
-    
+
     - name: Upload artifact (Windows)
       if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4

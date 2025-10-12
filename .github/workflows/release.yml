@@ -21,32 +21,32 @@ jobs:
           - os: windows-latest
             artifact_name: network_monitor.exe
             asset_name: network_monitor-windows-amd64
-            
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Install dependencies (Ubuntu)
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install -y libpcap-dev
-    
+
     - name: Install dependencies (macOS)
       if: runner.os == 'macOS'
       run: |
         # libpcap is usually included with Xcode Command Line Tools
         echo "libpcap should be available on macOS"
-    
+
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows'
       run: |
         choco install npcap -y
         choco install mingw -y
-    
+
     - name: Install 7-Zip (Windows)
       if: runner.os == 'Windows'
       run: choco install 7zip -y
-    
+
     - name: Install Npcap SDK (Windows)
       if: runner.os == 'Windows'
       run: |
@@ -67,28 +67,28 @@ jobs:
         mkdir -p "C:/Program Files/Npcap/sdk"
         cp -r "$SDK_DIR"/* "C:/Program Files/Npcap/sdk/"
       shell: bash
-    
+
     - name: Build (Linux/macOS)
       if: runner.os != 'Windows'
       run: |
         g++ -o ${{ matrix.artifact_name }} main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lpcap -lpthread
         chmod +x ${{ matrix.artifact_name }}
-    
+
     - name: Build (Windows)
       if: runner.os == 'Windows'
       run: |
         g++ -o ${{ matrix.artifact_name }} main.cpp network_monitor.cpp dashboard.cpp multi_monitor.cpp -lwpcap -lpacket -lws2_32 -static-libgcc -static-libstdc++ -I"C:/Program Files/Npcap/sdk/Include" -L"C:/Program Files/Npcap/sdk/Lib/x64"
-    
+
     - name: Create tarball (Linux/macOS)
       if: runner.os != 'Windows'
       run: |
         tar -czf ${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }} README.md LICENSE
-    
+
     - name: Create zip archive (Windows)
       if: runner.os == 'Windows'
       run: |
         7z a ${{ matrix.asset_name }}.zip ${{ matrix.artifact_name }} README.md LICENSE
-    
+
     - name: Generate SHA256 checksums
       if: runner.os == 'Windows'
       shell: pwsh
@@ -98,13 +98,13 @@ jobs:
         Set-Content -Path "${{ matrix.asset_name }}.zip.sha256" -Value $hashString
         Write-Host "SHA256 checksum: $hashString"
         Get-Content "${{ matrix.asset_name }}.zip.sha256"
-    
+
     - name: Generate SHA256 checksums (Linux/macOS)
       if: runner.os != 'Windows'
       run: |
         sha256sum ${{ matrix.asset_name }}.tar.gz > ${{ matrix.asset_name }}.tar.gz.sha256
         cat ${{ matrix.asset_name }}.tar.gz.sha256
-    
+
     - name: Upload Release Asset (Linux/macOS)
       if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
@@ -114,7 +114,7 @@ jobs:
           ${{ matrix.asset_name }}.tar.gz.sha256
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+
     - name: Upload Release Asset (Windows)
       if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
