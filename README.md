@@ -231,6 +231,26 @@ Pre-built binaries are available from the [Releases](https://github.com/GizzZmo/
 - macOS (amd64)
 - Windows (amd64)
 
+#### ⚠️ Windows Antivirus False Positive Warning
+
+**The Windows executable may be flagged by Windows Defender or other antivirus software as a potential threat (Trojan:Script/Wacatac.B!ml).** This is a **false positive** that commonly affects network monitoring tools.
+
+**Why this happens:**
+- Network monitoring tools require low-level access to capture packets
+- The executable uses packet capture libraries (Npcap) similar to what malware might use
+- The binary is statically linked and unsigned
+
+**This software is safe.** You can:
+- Review the source code (it's all here!)
+- Build it yourself from source (see build instructions above)
+- Check the VirusTotal scan results in each release
+- Verify the download using the provided SHA256 checksums
+- Add an exclusion in Windows Defender (see [SECURITY.md](SECURITY.md) for instructions)
+
+For detailed information about this false positive and how to handle it, see [SECURITY.md](SECURITY.md).
+
+**Verifying your download:** Each release includes SHA256 checksum files (`.sha256`). See [RELEASE.md](RELEASE.md) for verification instructions.
+
 ### Creating a Release
 
 To create a new release with binaries:

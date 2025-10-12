@@ -30,13 +30,39 @@ git push origin v1.0.0
 
 Each release includes:
 - `network_monitor-linux-amd64.tar.gz` - Linux x86_64 binary
+- `network_monitor-linux-amd64.tar.gz.sha256` - SHA256 checksum
 - `network_monitor-macos-amd64.tar.gz` - macOS x86_64 binary
+- `network_monitor-macos-amd64.tar.gz.sha256` - SHA256 checksum
 - `network_monitor-windows-amd64.zip` - Windows x86_64 binary
+- `network_monitor-windows-amd64.zip.sha256` - SHA256 checksum
 
 Each archive contains:
 - The compiled `network_monitor` binary (or `network_monitor.exe` on Windows)
 - `README.md` documentation
 - `LICENSE` file
+
+#### Verifying Downloads
+
+To verify the integrity of a downloaded release:
+
+**Windows (PowerShell):**
+```powershell
+# Download both the zip and .sha256 file
+$expectedHash = (Get-Content network_monitor-windows-amd64.zip.sha256).Split(' ')[0]
+$actualHash = (Get-FileHash -Algorithm SHA256 network_monitor-windows-amd64.zip).Hash
+if ($expectedHash -eq $actualHash) {
+    Write-Host "✓ Checksum verified successfully!" -ForegroundColor Green
+} else {
+    Write-Host "✗ Checksum verification failed!" -ForegroundColor Red
+}
+```
+
+**Linux/macOS:**
+```bash
+# Download both the tar.gz and .sha256 file
+sha256sum -c network_monitor-linux-amd64.tar.gz.sha256
+# Should output: network_monitor-linux-amd64.tar.gz: OK
+```
 
 ### Manual Release (Alternative)
 
@@ -82,3 +108,10 @@ The Build workflow runs on every push and pull request to ensure:
 - Verify the tag follows the pattern `v*.*.*` (e.g., `v1.0.0`)
 - Check that the tag was pushed to the remote repository
 - Review workflow permissions in repository settings
+
+**Windows Defender flags the executable as a virus (Trojan:Script/Wacatac.B!ml):**
+- This is a **false positive** that commonly affects network monitoring tools
+- The executable is safe - all source code is available for review
+- See [SECURITY.md](SECURITY.md) for detailed information and resolution steps
+- You can build from source to avoid pre-built binary concerns
+- Consider reporting this as a false positive to Microsoft to help improve their detection
