@@ -80,6 +80,38 @@ std::vector<std::string> NetworkMonitor::listInterfaces() {
 }
 
 /**
+ * @brief Gets friendly description for an interface
+ * @param device_name Device name to get description for
+ * @return Friendly description if available, otherwise returns device_name
+ */
+std::string NetworkMonitor::getInterfaceDescription(const std::string& device_name) {
+    pcap_if_t* alldevs;
+    char errbuf[PCAP_ERRBUF_SIZE];
+    
+    // Find all devices
+    if (pcap_findalldevs(&alldevs, errbuf) == -1) {
+        return device_name; // Return original name on error
+    }
+    
+    // Search for the device and get its description
+    std::string description = device_name; // Default to device name
+    for (pcap_if_t* dev = alldevs; dev != nullptr; dev = dev->next) {
+        if (device_name == dev->name) {
+            // Prefer description if available (especially useful on Windows)
+            if (dev->description != nullptr && dev->description[0] != '\0') {
+                description = dev->description;
+            }
+            break;
+        }
+    }
+    
+    // Free the device list
+    pcap_freealldevs(alldevs);
+    
+    return description;
+}
+
+/**
  * @brief Gets the current network interface name
  * @return Interface name
  */
