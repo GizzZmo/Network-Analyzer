@@ -97,17 +97,10 @@ std::string NetworkMonitor::getInterfaceDescription(const std::string& device_na
     std::string description = device_name; // Default to device name
     for (pcap_if_t* dev = alldevs; dev != nullptr; dev = dev->next) {
         if (device_name == dev->name) {
-            // On Windows, prefer description if available
-            #ifdef _WIN32
+            // Prefer description if available (especially useful on Windows)
             if (dev->description != nullptr && dev->description[0] != '\0') {
                 description = dev->description;
             }
-            #else
-            // On Unix/Linux/macOS, use description if available, otherwise use name
-            if (dev->description != nullptr && dev->description[0] != '\0') {
-                description = dev->description;
-            }
-            #endif
             break;
         }
     }
